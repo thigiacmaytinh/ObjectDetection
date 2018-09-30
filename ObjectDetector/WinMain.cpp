@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include <tchar.h>
-#include "CameraExample.h"
 #include "TGMTConfig.h"
 #include "TGMTcamera.h"
 #include "TGMTobjDetect.h"
