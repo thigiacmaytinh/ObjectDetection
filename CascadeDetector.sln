@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjectDetector", "ObjectDetector\ObjectDetector.vcxproj", "{4B803BD0-2F72-4418-8971-F85F9565A2FE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CascadeDetector", "CascadeDetector\CascadeDetector.vcxproj", "{4B803BD0-2F72-4418-8971-F85F9565A2FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
