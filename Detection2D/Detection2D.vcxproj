@@ -118,6 +118,11 @@
     <ClInclude Include="..\lib\TGMTcpp\src\TGMTshape.h" />
     <ClInclude Include="..\lib\TGMTcpp\src\TGMTutil.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lib\opencv320_lite\contrib\xfeatures2d\opencv_xfeatures2d.vcxproj">
+      <Project>{23803ba3-c253-4767-bb09-4642527863ef}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
