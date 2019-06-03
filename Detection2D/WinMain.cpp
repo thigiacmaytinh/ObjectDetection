@@ -17,6 +17,8 @@
 
 using namespace cv::xfeatures2d;
 
+cv::Mat g_mat;
+
 cv::Mat ResizeByHeight(cv::Mat matInput, int height)
 {
 	cv::Mat matResult;
@@ -25,6 +27,24 @@ cv::Mat ResizeByHeight(cv::Mat matInput, int height)
 	return matResult;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void DrawAndShowKeypoint(cv::Mat matInput, std::vector<cv::KeyPoint> keypoints)
+{
+	
+	for (int i = 0; i < keypoints.size(); i++)
+	{
+		cv::KeyPoint key = keypoints[i];
+		TGMTshape::Circle circle(key.pt, 3);
+		TGMTdraw::DrawCircle(g_mat, circle);		
+	}
+
+	ShowImage(g_mat, "draw keypoint");
+
+	cv::imwrite("keypoint.jpg", g_mat);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void SURFmatching(cv::Mat matScene, cv::Mat matObject)
 {
@@ -36,15 +56,17 @@ void SURFmatching(cv::Mat matScene, cv::Mat matObject)
 	cv::Mat descriptors_object, descriptors_scene;
 	detector->detectAndCompute(matObject, cv::Mat(), keypoints_object, descriptors_object);
 	detector->detectAndCompute(matScene, cv::Mat(), keypoints_scene, descriptors_scene);
+
+	DrawAndShowKeypoint(matScene, keypoints_scene);
 	//-- Step 2: cv::Matching descriptor vectors using FLANN cv::Matcher
-	cv::FlannBasedMatcher Matcher;
-	std::vector< cv::DMatch > Matches;
-	Matcher.match(descriptors_object, descriptors_scene, Matches);
+	cv::FlannBasedMatcher matcher;
+	std::vector< cv::DMatch > matches;
+	matcher.match(descriptors_object, descriptors_scene, matches);
 	double max_dist = 0; double min_dist = 100;
 	//-- Quick calculation of max and min distances between keypoints
 	for (int i = 0; i < descriptors_object.rows; i++)
 	{
-		double dist = Matches[i].distance;
+		double dist = matches[i].distance;
 		if (dist < min_dist) min_dist = dist;
 		if (dist > max_dist) max_dist = dist;
 	}
@@ -54,15 +76,17 @@ void SURFmatching(cv::Mat matScene, cv::Mat matObject)
 	std::vector< cv::DMatch > good_Matches;
 	for (int i = 0; i < descriptors_object.rows; i++)
 	{
-		if (Matches[i].distance < 3 * min_dist)
+		if (matches[i].distance < 3 * min_dist)
 		{
-			good_Matches.push_back(Matches[i]);
+			good_Matches.push_back(matches[i]);
 		}
 	}
 	cv::Mat img_Matches;
 	cv::drawMatches(matObject, keypoints_object, matScene, keypoints_scene,
 		good_Matches, img_Matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
 		std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+
+
 	//-- Localize the object
 	std::vector<cv::Point2f> obj;
 	std::vector<cv::Point2f> scene;
@@ -88,19 +112,18 @@ void SURFmatching(cv::Mat matScene, cv::Mat matObject)
 
 
 
-	img_Matches = ResizeByHeight(img_Matches, 600);
+	img_Matches = ResizeByHeight(img_Matches, 800);
 	cv::imshow("Good cv::Matches & Object detection", img_Matches);
-
-
-
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	cv::Mat matScene = cv::imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
+	cv::Mat matScene = cv::imread(argv[1]);
+	g_mat = matScene;
+	cv::cvtColor(matScene, matScene, CV_BGR2GRAY);
+
 	cv::Mat matObject = cv::imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
 	SURFmatching(matScene, matObject);
 	

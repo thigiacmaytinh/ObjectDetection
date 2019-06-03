@@ -261,7 +261,7 @@ void TGMTdraw::DrawRectMask(cv::Mat& matInput, cv::Rect rect, float alpha)
 
 void TGMTdraw::DrawCircle(cv::Mat& matInput, TGMTshape::Circle circle, cv::Scalar color, int thickness)
 {
-	cv::circle(matInput, circle.center, circle.radius,color, thickness, 8, 0);
+	cv::circle(matInput, circle.center, circle.radius, color == UNDEFINED_COLOR ? TGMTcolor::GetRandomColor() : color, thickness, 8, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
